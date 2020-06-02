@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.config.AuthenticationErrorResponse;
-import com.example.demo.model.User;
 import com.example.demo.model.UserResponse;
 import com.example.demo.model.enums.Status;
 import com.example.demo.repository.UserRepository;
@@ -15,24 +14,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.emptyOrNullString;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -40,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DisplayName("Merchant Controller Integration Tests")
 @Execution(ExecutionMode.CONCURRENT)
-public class MerchantControllerIntegrationTest extends Login{
+public class MerchantControllerIntegrationTest extends HelperTest {
     @Value("${jwt.expiration}")
     private long expiration;
 
@@ -92,7 +85,7 @@ public class MerchantControllerIntegrationTest extends Login{
     @Test
     @DisplayName("Login Success")
     public void testLoginSuccess() throws URISyntaxException {
-       // userRepository.deleteAll();
+        // userRepository.deleteAll();
         //userRepository.save(User.builder().email("demo@financialhouse.io").password(passwordEncoder().encode("cjaiU8CV")).build());
 
         UserResponse response = login("demo@financialhouse.io", "cjaiU8CV");

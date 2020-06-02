@@ -1,14 +1,8 @@
 package com.example.demo.config;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Optional;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.example.demo.model.User;
+import com.example.demo.repository.UserRepository;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,8 +11,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import io.jsonwebtoken.ExpiredJwtException;
-import com.example.demo.repository.UserRepository;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Optional;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -26,16 +26,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private UserRepository userRepository;
     @Autowired
     private TokenUtil jwtTokenUtil;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-        System.err.println("Aaaaaaaaaaa");
-        System.out.println("Aaaaaaaaaaa");
-        final String requestTokenHeader = request.getHeader("Authorization");
+        final String jwtToken = request.getHeader("Authorization");
         String username = null;
-        String jwtToken = null;
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Authorization")) {
-            jwtToken = requestTokenHeader.substring("Authorization".length());
+        if (jwtToken != null) {
             try {
                 username = jwtTokenUtil.getUsernameFromToken(jwtToken);
             } catch (IllegalArgumentException e) {
@@ -49,7 +46,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 // Once we get the token validate it.
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             Optional<User> oneByEmail = userRepository.findOneByEmail(username);
-            User user = userRepository.findOneByEmail(oneByEmail.get().getEmail()).map((u) -> new User(u.getId(),u.getEmail(), u.getPassword()))
+            User user = userRepository.findOneByEmail(oneByEmail.get().getEmail()).map((u) -> new User(u.getId(), u.getEmail(), u.getPassword()))
                     .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + oneByEmail.get().getEmail()));
 
             UserDetails userDetails = new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), new ArrayList<>());

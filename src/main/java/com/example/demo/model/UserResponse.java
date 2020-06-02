@@ -1,9 +1,9 @@
 package com.example.demo.model;
 
+import com.example.demo.model.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.example.demo.model.enums.Status;
 
 @Data
 @NoArgsConstructor

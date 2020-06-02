@@ -8,14 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@ActiveProfiles("integrationtest")
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
 public class ApiUserRepositoryTest {
@@ -32,6 +30,8 @@ public class ApiUserRepositoryTest {
     @DisplayName("Find ApiUser by Username")
     public void whenFindByNameThenReturnApiUser() {
         User user = User.builder().email("demo@financialhouse.io").password(passwordEncoder.encode("cjaiU8CV")).build();
+        userRepository.deleteAll();
+        userRepository.save(user);
         Optional<User> foundUser = userRepository.findOneByEmail("demo@financialhouse.io");
 
 
